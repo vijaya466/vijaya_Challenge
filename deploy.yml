@@ -1,0 +1,39 @@
+# deploy.yml
+---
+- name: Deploy Web Server
+  hosts: all
+  become: true
+  vars:
+    nginx_server_name: "vijaya.chickenkiller.com"
+  roles:
+    - webserver 
+  tasks: 
+    - name: Create SSL directory if it doesn't exist
+      file:
+        path: /etc/nginx/ssl
+        state: directory
+        mode: '0755'  # Set appropriate permissions for the directory
+      become: true  # Run the task with elevated privileges
+    - name: Copy SSL certificate file
+      copy:
+        src: ssl/server.crt  # Path to your SSL certificate file on the Ansible control node
+        dest: /etc/nginx/ssl/server.crt  # Destination path on the target server
+      become: true  # Run the task with elevated privileges
+
+    - name: Copy SSL private key file
+      copy:
+        src: ssl/server.key  # Path to your SSL private key file on the Ansible control node
+        dest: /etc/nginx/ssl/server.key  # Destination path on the target server
+        mode: '0600'  # Set appropriate permissions for the private key file
+      become: true  # Run the task with elevated privileges
+    - name: Copy nginx configuration file 
+      template: 
+        src: roles/webserver/templates/nginx.conf.j2  
+        dest: /etc/nginx/nginx.conf 
+      notify: 
+        - Restart Nginx
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted

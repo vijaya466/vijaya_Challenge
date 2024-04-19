@@ -1,0 +1,17 @@
+# roles/webserver/tasks/main.yml
+---
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nginx
+  become: true
+
+- name: Copy index.html
+  copy:
+    src: index.html
+    dest: /usr/share/nginx/html/index.html 
+  become: true
+
+

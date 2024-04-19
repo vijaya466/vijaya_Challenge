@@ -1,0 +1,4 @@
+Host ec2-13-53-116-86.eu-north-1.compute.amazonaws.com
+    HostName ec2-13-53-116-86.eu-north-1.compute.amazonaws.com
+    User ubuntu
+    IdentityFile ssh/Systemonex@2022.pem
